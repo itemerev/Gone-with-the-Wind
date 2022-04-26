@@ -8,5 +8,5 @@ class SingleIncome:
         self.value = value
 
 
-class DayIncome:
+class ConstantIncome:
     pass
