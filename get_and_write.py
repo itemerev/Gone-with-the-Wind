@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('day_income.db')
+conn = sqlite3.connect('gone_wind.db')
 cur = conn.cursor()
 
 
@@ -33,3 +33,9 @@ def write_month_income(day_income_id, date, amount_per_day, budget_for_day, bala
     month_income = (day_income_id, date, amount_per_day, budget_for_day, balance)
     cur.execute("INSERT INTO month_income VALUES(?, ?, ?, ?, ?);", month_income)
     conn.commit()
+
+
+def get_one_income():
+    cur.execute('SELECT * FROM day_income ORDER BY day_income_id DESC LIMIT 1;')
+    last_income = fetchone()
+    return last_income
