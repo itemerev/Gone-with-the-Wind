@@ -14,7 +14,7 @@ class SingleIncome:
 
     def write_data(self):
         get_and_write.write_single_income(self.income_id, self.date, self.category, self.value)
-        self.income_id += 1
+        self.income_id = str(int(self.income_id) + 1)
 
 
 class ConstantIncome:
