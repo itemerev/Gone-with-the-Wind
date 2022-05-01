@@ -30,7 +30,12 @@ def main():
                 app.write_income()
                 print(app.last_line)
                 print(get_and_write.get_last_line())
+            else:
+                # zapisat log iz tablicy
+                # zapisat dannie za den v tablicu mesyac
+                # udalit zapisi iz tablicy
+                # app.write_income()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':8
     main()

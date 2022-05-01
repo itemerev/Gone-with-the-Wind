@@ -39,3 +39,12 @@ def get_last_line():
     cur.execute('SELECT * FROM day_income ORDER BY single_income_id DESC LIMIT 1;')
     last_line = cur.fetchone()
     return last_line
+
+def write_day_log():
+    cur.execute('SELECT * FROM day_income')
+    all_line = cur.fetchall()
+    log_date = all_line[0][1]
+    with open(f'Logs/{log_date}.txt', 'w', encoding='utf-8') as log_file:
+        for line in all_line:
+            log_file.write(str(line) + '\n')
+
