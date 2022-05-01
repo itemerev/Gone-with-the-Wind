@@ -31,7 +31,7 @@ def main():
                 print(app.last_line)
                 print(get_and_write.get_last_line())
             else:
-                # zapisat log iz tablicy
+                # get_and_write.write_day_log()
                 # zapisat dannie za den v tablicu mesyac
                 # udalit zapisi iz tablicy
                 # app.write_income()
