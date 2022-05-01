@@ -35,7 +35,7 @@ def write_month_income(day_income_id, date, amount_per_day, budget_for_day, bala
     conn.commit()
 
 
-def get_one_income():
+def get_last_line():
     cur.execute('SELECT * FROM day_income ORDER BY single_income_id DESC LIMIT 1;')
-    last_income = cur.fetchone()
-    return last_income
+    last_line = cur.fetchone()
+    return last_line
