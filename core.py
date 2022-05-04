@@ -1,5 +1,5 @@
 import datetime
-import get_and_write
+import working_with_databases
 
 
 class SingleIncome:
@@ -10,10 +10,10 @@ class SingleIncome:
         self.category = category
         self.value = value
 
-        get_and_write.create_day_income()
+        working_with_databases.create_day_income()
 
     def write_data(self):
-        get_and_write.write_single_income(self.income_id, self.date, self.category, self.value)
+        working_with_databases.write_single_income(self.income_id, self.date, self.category, self.value)
         self.income_id = str(int(self.income_id) + 1)
 
 

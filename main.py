@@ -1,11 +1,11 @@
 import core
-import get_and_write
+import working_with_databases
 
 
 class ConsoleApp:
     def __init__(self, entry_data):
         self.income_data = entry_data.split()
-        self.last_line = get_and_write.get_last_line()
+        self.last_line = working_with_databases.get_last_line()
         self.for_table = core.SingleIncome(self.income_data[1], self.income_data[0])
 
     def date_check(self):
@@ -29,9 +29,9 @@ def main():
             if app.date_check():
                 app.write_income()
                 print(app.last_line)
-                print(get_and_write.get_last_line())
+                print(working_with_databases.get_last_line())
             else:
-                # get_and_write.write_day_log()
+                # working_with_databases.write_day_log()
                 # zapisat dannie za den v tablicu mesyac
                 # udalit zapisi iz tablicy
                 # app.write_income()
