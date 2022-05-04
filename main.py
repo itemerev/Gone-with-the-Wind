@@ -4,19 +4,21 @@ import working_with_databases
 
 class ConsoleApp:
     def __init__(self, entry_data):
-        self.income_data = entry_data.split()
+        self.expenses_data = entry_data.split()
+        self.for_table = core.SingleExpenses(self.expenses_data[1], self.expenses_data[0])
         self.last_line = working_with_databases.get_last_line()
-        self.for_table = core.SingleIncome(self.income_data[1], self.income_data[0])
 
     def date_check(self):
+        if not self.last_line:
+            return True
         return str(self.for_table.date) == str(self.last_line[1])
 
-    def write_income(self):
-        if not self.last_income:
-            self.for_table.income_id = '0'
+    def write_expenses(self):
+        if not self.last_line:
+            self.for_table.expenses_id = '0'
         else:
-            self.for_table.income_id = str(int(self.last_line[0]) + 1)
-            self.for_table.write_data()
+            self.for_table.expenses_id = str(int(self.last_line[0]) + 1)
+        self.for_table.write_data()
 
 
 def main():
@@ -27,15 +29,16 @@ def main():
         else:
             app = ConsoleApp(entry_data)
             if app.date_check():
-                app.write_income()
+                app.write_expenses()
                 print(app.last_line)
                 print(working_with_databases.get_last_line())
             else:
+                pass
                 # working_with_databases.write_day_log()
-                # zapisat dannie za den v tablicu mesyac
-                # udalit zapisi iz tablicy
+                # Записать данные в таблицу расходов за месяц
+                # Удалить таблицу расходов за день или все записи из нее
                 # app.write_income()
 
 
-if __name__ == '__main__':8
+if __name__ == '__main__':
     main()
