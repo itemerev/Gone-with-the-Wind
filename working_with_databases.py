@@ -99,7 +99,6 @@ class WriteToTable(Connect):
         Запись суммы днеынх расходов в БД в таблицу расходов за месяц
         """
 
-        # Необходимо переименовать атрибут 'amount_per_day'
         month_expenses = (day_expenses_id, date, amount_per_day, budget_for_day, balance)
         self.cur.execute("INSERT INTO month_expenses VALUES(?, ?, ?, ?, ?);", month_expenses)
         self.con.commit()
