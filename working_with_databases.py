@@ -93,13 +93,12 @@ class WriteToTable(Connect):
         self.cur.execute("INSERT INTO day_expenses VALUES(?, ?, ?, ?);", day_expenses)
         self.con.commit()
 
-    # Необходимо переименовать атрибут 'amount_per_day'
-    def write_month_expenses(self, day_expenses_id, date, amount_per_day, budget_for_day, balance):
+    def write_month_expenses(self, day_expenses_id, date, expenses_per_day, budget_for_day, balance):
         """
         Запись суммы днеынх расходов в БД в таблицу расходов за месяц
         """
 
-        month_expenses = (day_expenses_id, date, amount_per_day, budget_for_day, balance)
+        month_expenses = (day_expenses_id, date, expenses_per_day, budget_for_day, balance)
         self.cur.execute("INSERT INTO month_expenses VALUES(?, ?, ?, ?, ?);", month_expenses)
         self.con.commit()
 
