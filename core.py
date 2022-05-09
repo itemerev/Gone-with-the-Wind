@@ -49,7 +49,7 @@ class SingleExpenses:
     def __init__(self, category, value):
         db.create_day_expenses()
 
-        self.date = datetime.date.today()
+        self.date = str(datetime.date.today())
         self.category = category
         self.value = value
 
@@ -60,9 +60,7 @@ class SingleExpenses:
         Проверка на наличие предыдущей записи и присвоение id для текущей записи
         """
 
-        if not self.last_expenses:
-            self.expenses_id = '1'
-        else:
+        if self.last_expenses:
             self.expenses_id = str(int(self.last_expenses[0]) + 1)
 
     def write_single_expenses(self):
@@ -71,5 +69,6 @@ class SingleExpenses:
         """
 
         # Добавить условие, если дата внесения записи изменилась
-        db.WriteToTable.write_single_expenses(self.expenses_id, self.date, self.category, self.value)
-        self.expenses_id += 1
+        if self.date == self.last_expenses[1]:
+            db.WriteToTable.write_single_expenses(self.expenses_id, self.date, self.category, self.value)
+            self.expenses_id += 1
