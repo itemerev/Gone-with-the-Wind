@@ -131,12 +131,12 @@ class ReadFromTable(Connect):
         Чтение последней записи разовых расходов
         """
 
-        cur.execute('SELECT * FROM day_expenses ORDER BY single_expenses_id DESC LIMIT 1;')
-        self.last_expenses = cur.fetchone()
+        self.cur.execute('SELECT * FROM day_expenses ORDER BY single_expenses_id DESC LIMIT 1;')
+        self.last_expenses = self.cur.fetchone()
 
     def get_last_month_expenses(self):
-        cur.execute('SELECT * FROM month_expenses ORDER BY day_expenses_id DESC limit 1;')
-        self.last_day_expenses = cur.fetchone()
+        self.cur.execute('SELECT * FROM month_expenses ORDER BY day_expenses_id DESC limit 1;')
+        self.last_day_expenses = self.cur.fetchone()
 
     def read_day_expenses(self):
         """
