@@ -103,6 +103,15 @@ class WriteToTable(Connect):
         self.con.commit()
 
 
+class ClearTable(Connect):
+    def __init__(self):
+        super().__init__()
+
+    def clear_day_expenses(self):
+        self.cur.execute("DELETE FROM day_expenses")
+        self.con.commit()
+
+
 class ReadFromTable(Connect):
     """
     Чтение данных из БД
@@ -112,6 +121,7 @@ class ReadFromTable(Connect):
         super().__init__()
 
         self.last_expenses = None
+        self.last_day_expenses = None
 
         self.all_line = None
         self.log_date = None
@@ -123,6 +133,10 @@ class ReadFromTable(Connect):
 
         cur.execute('SELECT * FROM day_expenses ORDER BY single_expenses_id DESC LIMIT 1;')
         self.last_expenses = cur.fetchone()
+
+    def get_last_month_expenses(self):
+        cur.execute('SELECT * FROM month_expenses ORDER BY day_expenses_id DESC limit 1;')
+        self.last_day_expenses = cur.fetchone()
 
     def read_day_expenses(self):
         """
