@@ -75,7 +75,8 @@ class SingleExpenses:
     day_id = '1'
 
     def __init__(self, category, value):
-        self.date = str(datetime.date.today())
+        # self.date = str(datetime.date.today())
+        self.date = '2022-05-13'
         self.category = category
         self.value = value
 
@@ -115,12 +116,10 @@ class SingleExpenses:
         """
 
         if not self.last_expenses or self.date == self.last_expenses[1]:
-
-            self.write.write_single_expenses(self.expenses_id, self.date, self.category, self.value)
+            self.write.write_single_expenses(self.date, self.category, self.value)
         elif check_month():
             expenses_per_day = Calculate.sum_day_expenses()
-            self.write.write_month_expenses(
-                self.day_id, self.last_expenses[1], expenses_per_day, budget_per_day=0, balance=0)
-            db.CreateLog.write_day_log()
-            db.ClearTable.clear_day_expenses()
-            self.write.write_single_expenses(self.expenses_id, self.date, self.category, self.value)
+            self.write.write_month_expenses(self.last_expenses[1], expenses_per_day, budget_per_day=0, balance=0)
+            db.CreateLog().write_day_log()
+            db.ClearTable().clear_day_expenses()
+            self.write.write_single_expenses(self.date, self.category, self.value)
