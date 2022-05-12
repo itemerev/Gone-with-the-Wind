@@ -12,21 +12,20 @@ class ConsoleApp:
     create.create_month_expenses()
 
     def __init__(self):
-        self.entry_text = core.ParseInput(input())
+        self.data = core.ParseInput(input())
 
     def run(self):
         """
         Главный цикл работы приложения (для завершения работы необходимо ввести команду 'exit')
         """
 
-        while not self.entry_text.check_exit():
-            if not self.entry_text.check_command():
-                self.entry_text.parse_single_expenses()
+        while not self.data.check_exit():
+            self.data.parse_single_expenses()
 
-                SE = core.SingleExpenses(self.entry_text.value, self.entry_text.category)
-                SE.write_single_expenses()
+            SE = core.SingleExpenses(self.data.category, self.data.value)
+            SE.write_single_expenses()
 
-            self.entry_text = core.ParseInput(input())
+            self.data = core.ParseInput(input())
 
 
 if __name__ == '__main__':

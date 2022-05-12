@@ -15,9 +15,6 @@ class ParseInput:
         self.category = None
 
     def check_exit(self):
-        """
-        Проверка команды завершения работы приложения
-        """
 
         return self.input_text == 'exit'
 
@@ -75,8 +72,8 @@ class SingleExpenses:
     day_id = '1'
 
     def __init__(self, category, value):
-        # self.date = str(datetime.date.today())
-        self.date = '2022-05-13'
+        self.date = str(datetime.date.today())
+        # self.date = '2022-05-13'
         self.category = category
         self.value = value
 
@@ -84,6 +81,23 @@ class SingleExpenses:
         self.last_day_expenses = db.ReadFromTable().get_last_month_expenses()
 
         self.write = db.WriteToTable()
+    
+    def change_day(self):
+        db.CreateLog().write_day_log()
+        db.WriteToTable.write_month_expenses(
+            self.day_id,
+            self.date,
+            Calculate().sum_day_expenses(),
+            0, 0
+        )
+        db.ClearTable().clear_day_expenses()
+        self.expenses_id = 1
+
+    def change_month(self):
+        db.CreateLog().write_month_log()
+        db.ClearTable().clear_month_expenses()
+        self.day_id = 1
+
 
     # TODO: Исправить работоспособность следующих 4-х методов класса
     def check_last_expenses(self):
@@ -102,24 +116,39 @@ class SingleExpenses:
         if self.last_day_expenses:
             self.day_id = str(int(self.last_day_expanses[0]) + 1)
 
+    def check_day(self):
+        if self.last_expenses:
+            return self.date == self.last_expenses[1]
+        return True
+
     def check_month(self):
         """
         Проверка соответсвия текущего месяца с месяцем последней записи в таблице рачходов за месяц
         """
-
-        last_month = self.last_expenses[1][5:7]
-        return self.date[5:7] == last_month
+        
+        if self.last_expenses:
+            last_month = self.last_expenses[1][:7]
+            return self.date[:7] == last_month
+        return True
 
     def write_single_expenses(self):
         """
         Сохранение данных о разовых расходах в БД
         """
+    
+        if not self.check_month():
+            self.change_day()
+            self.change_month()
+        elif not self.check_day():
+            delf.change_day()
+            self.day_id += 1
 
-        if not self.last_expenses or self.date == self.last_expenses[1]:
-            self.write.write_single_expenses(self.date, self.category, self.value)
-        elif check_month():
-            expenses_per_day = Calculate.sum_day_expenses()
-            self.write.write_month_expenses(self.last_expenses[1], expenses_per_day, budget_per_day=0, balance=0)
-            db.CreateLog().write_day_log()
-            db.ClearTable().clear_day_expenses()
-            self.write.write_single_expenses(self.date, self.category, self.value)
+        self.check_last_day_expenses()
+
+        db.WriteToTable().write_single_expenses(
+            self.expenses_id,
+            self.date,
+            self.category,
+            self.value
+        )
+
