@@ -93,7 +93,7 @@ class WriteToTable(Connect):
         self.cur.execute("INSERT INTO day_expenses VALUES(?, ?, ?, ?);", day_expenses)
         self.con.commit()
 
-    def write_month_expenses(self, day_id, date, expenses_per_day, budget_for_day=0, balance=0):
+    def write_month_expenses(self, day_id, date, expenses_per_day, budget_for_day, balance):
         """
         Запись суммы днеынх расходов в БД в таблицу расходов за месяц
         """
@@ -133,11 +133,11 @@ class ReadFromTable(Connect):
         """
 
         self.cur.execute('SELECT * FROM day_expenses ORDER BY single_expenses_id DESC LIMIT 1;')
-        self.last_expenses = self.cur.fetchone()
+        return self.cur.fetchone()
 
     def get_last_month_expenses(self):
         self.cur.execute('SELECT * FROM month_expenses ORDER BY day_expenses_id DESC limit 1;')
-        self.last_day_expenses = self.cur.fetchone()
+        return self.cur.fetchone()
 
     def read_day_expenses(self):
         """

@@ -41,14 +41,16 @@ class Calculate:
     """
 
     def __init__(self):
-        self.expenses = [int(row[-1][-1]) for row in db.ReadFromTable.all_line]
+        self.reader = db.ReadFromTable()
+        self.reader.read_day_expenses()
+        self.expenses = [int(row[-1]) for row in self.reader.all_line]
 
     def sum_day_expenses(self):
         """
         Сумма всех расходов в течение дня
         """
 
-        return sum(self.expenses)
+        return str(sum(self.expenses))
 
 
 class RegularIncome:
@@ -72,8 +74,8 @@ class SingleExpenses:
     day_id = '1'
 
     def __init__(self, category, value):
-        self.date = str(datetime.date.today())
-        # self.date = '2022-05-13'
+        # self.date = str(datetime.date.today())
+        self.date = '2022-05-13'
         self.category = category
         self.value = value
 
@@ -84,12 +86,7 @@ class SingleExpenses:
     
     def change_day(self):
         db.CreateLog().write_day_log()
-        db.WriteToTable.write_month_expenses(
-            self.day_id,
-            self.date,
-            Calculate().sum_day_expenses(),
-            0, 0
-        )
+        self.write.write_month_expenses(self.day_id, self.date, Calculate().sum_day_expenses(), '0', '0')
         db.ClearTable().clear_day_expenses()
         self.expenses_id = 1
 
@@ -140,15 +137,9 @@ class SingleExpenses:
             self.change_day()
             self.change_month()
         elif not self.check_day():
-            delf.change_day()
-            self.day_id += 1
+            self.change_day()
+            self.day_id = str(int(self.day_id) + 1)
 
-        self.check_last_day_expenses()
+        self.check_last_expenses()
 
-        db.WriteToTable().write_single_expenses(
-            self.expenses_id,
-            self.date,
-            self.category,
-            self.value
-        )
-
+        db.WriteToTable().write_single_expenses(self.expenses_id, self.date, self.category, self.value)
