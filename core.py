@@ -75,7 +75,7 @@ class SingleExpenses:
 
     def __init__(self, category, value):
         # self.date = str(datetime.date.today())
-        self.date = '2022-05-13'
+        self.date = '2022-08-13'
         self.category = category
         self.value = value
 
@@ -86,14 +86,15 @@ class SingleExpenses:
     
     def change_day(self):
         db.CreateLog().write_day_log()
+        self.check_last_day_expenses()
         self.write.write_month_expenses(self.day_id, self.date, Calculate().sum_day_expenses(), '0', '0')
         db.ClearTable().clear_day_expenses()
-        self.expenses_id = 1
+        self.expenses_id = '1'
 
     def change_month(self):
         db.CreateLog().write_month_log()
         db.ClearTable().clear_month_expenses()
-        self.day_id = 1
+        self.day_id = '1'
 
 
     # TODO: Исправить работоспособность следующих 4-х методов класса
@@ -111,7 +112,7 @@ class SingleExpenses:
         """
 
         if self.last_day_expenses:
-            self.day_id = str(int(self.last_day_expanses[0]) + 1)
+            self.day_id = str(int(self.last_day_expenses[0]) + 1)
 
     def check_day(self):
         if self.last_expenses:

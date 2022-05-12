@@ -111,6 +111,10 @@ class ClearTable(Connect):
         self.cur.execute("DELETE FROM day_expenses")
         self.con.commit()
 
+    def clear_month_expenses(self):
+        self.cur.execute("DELETE FROM month_expenses")
+        self.con.commit()
+
 
 class ReadFromTable(Connect):
     """
@@ -152,6 +156,7 @@ class ReadFromTable(Connect):
         
         self.cur.execute('SELECT * FROM month_expenses')
         self.all_month = self.cur.fetchall()
+        self.log_date = self.all_month[0][1]
 
 
 class CreateLog:
@@ -168,14 +173,13 @@ class CreateLog:
         """
 
         self.reader.read_day_expenses()
-        with open(f'Logs/{self.reader.log_date}.txt', 'w', encoding='utf-8') as log_file:
+        with open(f'Logs/Day/{self.reader.log_date}.txt', 'w', encoding='utf-8') as log_file:
             for line in self.reader.all_line:
                 log_file.write(str(line) + '\n')
 
     def write_month_log(self):
         
         self.reader.read_month_expenses()
-        with open(f'Logs/{self.reader.log_date[:-3]}.txt', 'w', encoding='utf-8') as month_log:
+        with open(f'Logs/Month/{self.reader.log_date[:-3]}.txt', 'w', encoding='utf-8') as month_log:
             for line in self.reader.all_month:
                 month_log.write(str(line) + '\n')
-
