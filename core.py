@@ -2,13 +2,28 @@ import datetime
 import working_with_databases as db
 
 
+class Event:
+
+    def __init__(self, user_text):
+        self.parser = ParseInput(user_text)
+
+
+    def start(self):
+        if self.parser.check_command():
+            pass
+        else:
+            self.parser.parse_single_expenses()
+            SE = SingleExpenses(self.parser.category, self.parser.value)
+            SE.write_single_expenses()
+
+
 class ParseInput:
     """
     Распознавание введенного текста
     """
 
-    def __init__(self, input_text):
-        self.input_text = input_text
+    def __init__(self, text_to_process):
+        self.text_to_process = itext_to_process
 
         self.expenses_data = None
         self.value = None
@@ -16,21 +31,21 @@ class ParseInput:
 
     def check_exit(self):
 
-        return self.input_text == 'exit'
+        return self.text_to_process == 'exit'
 
     def check_command(self):
         """
         Проверка поступающего от пользовтеля текста на наличие команд
         """
 
-        return '/' in self.input_text
+        return '/' in self.text_to_process
 
     def parse_single_expenses(self):
         """
         Разделение поступающего от пользовтеля текста на категорию затрат и сумму затрат
         """
 
-        self.expenses_data = self.input_text.split()  # TODO: строка может содержать отличное от 2-х число слов
+        self.expenses_data = self.text_to_process.split()  # TODO: строка может содержать отличное от 2-х число слов
         self.value = self.expenses_data[0]
         self.category = self.expenses_data[1]
 

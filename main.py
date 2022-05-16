@@ -8,24 +8,23 @@ class ConsoleApp:
     """
 
     create = db.CreateTables()
+    create.create_regular_income()
     create.create_day_expenses()
     create.create_month_expenses()
 
     def __init__(self):
-        self.data = core.ParseInput(input())
+        self.data = input()
 
     def run(self):
         """
         Главный цикл работы приложения (для завершения работы необходимо ввести команду 'exit')
         """
 
-        while not self.data.check_exit():
-            self.data.parse_single_expenses()
+        while self.data != 'exit':
+            one_event = core.Event(self.data)
+            one_event.start()
 
-            SE = core.SingleExpenses(self.data.category, self.data.value)
-            SE.write_single_expenses()
-
-            self.data = core.ParseInput(input())
+            self.data = input()
 
 
 if __name__ == '__main__':
