@@ -3,6 +3,10 @@ import working_with_databases as db
 
 
 class Event:
+    """
+    Класс для обработки событий и соответсвующих им действий
+    """
+
     def __init__(self, user_text):
         self.parser = ParseInput(user_text)
 
@@ -28,6 +32,10 @@ class ParseInput:
         self.split_text = self.text_to_process.split()
 
     def check_exit(self):
+        """
+        Проверка на наличие команды 'exit' в введенном пользователем тексте
+        """
+
         return self.text_to_process == 'exit'
 
     def check_command(self):
@@ -37,7 +45,11 @@ class ParseInput:
 
         return '/' in self.text_to_process
 
-    def check_lenght():
+    def check_lenght(self):
+        """
+        Проверка, что в введенном пользователем тексте 2 слова
+        """
+
         return len(self.split_text) == 2
 
     def parse_single_expenses(self):
@@ -99,6 +111,10 @@ class SingleExpenses:
         self.write = db.WriteToTable()
     
     def change_day(self):
+        """
+        Смена даты
+        """
+
         db.CreateLog().write_day_log()
         self.check_last_day_expenses()
         self.write.write_month_expenses(self.day_id, self.date, Calculate().sum_day_expenses(), '0', '0')
@@ -106,6 +122,10 @@ class SingleExpenses:
         self.expenses_id = '1'
 
     def change_month(self):
+        """
+        Смена месяца
+        """
+
         db.CreateLog().write_month_log()
         db.ClearTable().clear_month_expenses()
         self.day_id = '1'
@@ -120,20 +140,24 @@ class SingleExpenses:
 
     def check_last_day_expenses(self):
         """
-        Проверка на наличие предыдущей записи расходов за день и присвоение id для текущей записи
+        Проверка на наличие предыдущей записи в таблице расходов за месяц и присвоение id для текущей записи
         """
 
         if self.last_day_expenses:
             self.day_id = str(int(self.last_day_expenses[0]) + 1)
 
     def check_day(self):
+        """
+        Проверка соответсвия текущей даты с датой последней записи в таблице расходов за день
+        """
+
         if self.last_expenses:
             return self.date == self.last_expenses[1]
         return True
 
     def check_month(self):
         """
-        Проверка соответсвия текущего месяца с месяцем последней записи в таблице рачходов за месяц
+        Проверка соответсвия текущего месяца с месяцем последней записи в таблице расходов за месяц
         """
         
         if self.last_expenses:

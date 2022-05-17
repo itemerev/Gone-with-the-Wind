@@ -104,14 +104,26 @@ class WriteToTable(Connect):
 
 
 class ClearTable(Connect):
+    """
+    Удаление записей из таблиц
+    """
+
     def __init__(self):
         super().__init__()
 
     def clear_day_expenses(self):
+        """
+        Удаление всех записей из таблицы расходов за день
+        """
+
         self.cur.execute("DELETE FROM day_expenses")
         self.con.commit()
 
     def clear_month_expenses(self):
+        """
+        Удаление всех записей из таблицы расходов за месяц
+        """
+
         self.cur.execute("DELETE FROM month_expenses")
         self.con.commit()
 
@@ -140,6 +152,10 @@ class ReadFromTable(Connect):
         return self.cur.fetchone()
 
     def get_last_month_expenses(self):
+        """
+        Чтение последней записи в таблице расходов за месяц
+        """
+
         self.cur.execute('SELECT * FROM month_expenses ORDER BY day_expenses_id DESC limit 1;')
         return self.cur.fetchone()
 
@@ -153,6 +169,9 @@ class ReadFromTable(Connect):
         self.log_date = self.all_line[0][1]
 
     def read_month_expenses(self):
+        """
+        Чтение всех записей в таблице расходов за месяц
+        """
         
         self.cur.execute('SELECT * FROM month_expenses')
         self.all_month = self.cur.fetchall()
@@ -178,6 +197,9 @@ class CreateLog:
                 log_file.write(str(line) + '\n')
 
     def write_month_log(self):
+        """
+        Логирование всех расходов за месяц в файл '{год-месяц}.txt'
+        """
         
         self.reader.read_month_expenses()
         with open(f'Logs/Month/{self.reader.log_date[:-3]}.txt', 'w', encoding='utf-8') as month_log:

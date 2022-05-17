@@ -13,6 +13,10 @@ class ConsoleApp:
         self.data = input()
 
     def create_table(self):
+        """
+        Создание таблиц в базе данных, если их не существует
+        """
+
         create = db.CreateTables()
         create.create_regular_income()
         create.create_day_expenses()
