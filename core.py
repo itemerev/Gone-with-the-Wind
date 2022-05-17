@@ -3,13 +3,13 @@ import working_with_databases as db
 
 
 class Event:
-
     def __init__(self, user_text):
         self.parser = ParseInput(user_text)
 
-
     def start(self):
         if self.parser.check_command():
+            pass
+        elif self.parser.check_lenght():
             pass
         else:
             self.parser.parse_single_expenses()
@@ -25,12 +25,9 @@ class ParseInput:
     def __init__(self, text_to_process):
         self.text_to_process = itext_to_process
 
-        self.expenses_data = None
-        self.value = None
-        self.category = None
+        self.split_text = self.text_to_process.split()
 
     def check_exit(self):
-
         return self.text_to_process == 'exit'
 
     def check_command(self):
@@ -40,14 +37,16 @@ class ParseInput:
 
         return '/' in self.text_to_process
 
+    def check_lenght():
+        return len(self.split_text) == 2
+
     def parse_single_expenses(self):
         """
         Разделение поступающего от пользовтеля текста на категорию затрат и сумму затрат
         """
 
-        self.expenses_data = self.text_to_process.split()  # TODO: строка может содержать отличное от 2-х число слов
-        self.value = self.expenses_data[0]
-        self.category = self.expenses_data[1]
+        setattr(self, 'value', self.split_text[0])
+        setattr(self, 'category', self.split_text[1])
 
 
 class Calculate:
@@ -57,15 +56,15 @@ class Calculate:
 
     def __init__(self):
         self.reader = db.ReadFromTable()
-        self.reader.read_day_expenses()
-        self.expenses = [int(row[-1]) for row in self.reader.all_line]
 
     def sum_day_expenses(self):
         """
         Сумма всех расходов в течение дня
         """
 
-        return str(sum(self.expenses))
+        self.reader.read_day_expenses()
+        expenses_list = [int(row[-1]) for row in self.reader.all_line]
+        return str(sum(expenses_list))
 
 
 class RegularIncome:
@@ -89,8 +88,8 @@ class SingleExpenses:
     day_id = '1'
 
     def __init__(self, category, value):
-        # self.date = str(datetime.date.today())
-        self.date = '2022-05-28'
+        self.date = str(datetime.date.today())
+        # self.date = '2022-05-28'
         self.category = category
         self.value = value
 
@@ -111,8 +110,6 @@ class SingleExpenses:
         db.ClearTable().clear_month_expenses()
         self.day_id = '1'
 
-
-    # TODO: Исправить работоспособность следующих 4-х методов класса
     def check_last_expenses(self):
         """
         Проверка на наличие предыдущей записи расходов в течение дня и присвоение id для текущей записи

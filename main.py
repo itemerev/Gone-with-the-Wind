@@ -7,13 +7,16 @@ class ConsoleApp:
     Взаимодействие с пользователем через консоль (терминал) в качестве проверки работоспособности ядра программы
     """
 
-    create = db.CreateTables()
-    create.create_regular_income()
-    create.create_day_expenses()
-    create.create_month_expenses()
-
     def __init__(self):
+        self.create_table()
+
         self.data = input()
+
+    def create_table(self):
+        create = db.CreateTables()
+        create.create_regular_income()
+        create.create_day_expenses()
+        create.create_month_expenses()
 
     def run(self):
         """
