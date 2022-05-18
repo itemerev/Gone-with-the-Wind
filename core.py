@@ -1,5 +1,5 @@
 import datetime
-import working_with_databases as db
+import working_with_databases as DB
 
 
 class Event:
@@ -8,57 +8,22 @@ class Event:
     """
 
     def __init__(self, user_text):
-        self.parser = ParseInput(user_text)
+        self.user_text = user_text
 
     def start(self):
-        if self.parser.check_command():
-            pass
-        elif self.parser.check_lenght():
-            pass
-        else:
-            self.parser.parse_single_expenses()
-            SE = SingleExpenses(self.parser.category, self.parser.value)
-            SE.write_single_expenses()
-
-
-class ParseInput:
-    """
-    Распознавание введенного текста
-    """
-
-    def __init__(self, text_to_process):
-        self.text_to_process = itext_to_process
-
-        self.split_text = self.text_to_process.split()
-
-    def check_exit(self):
         """
-        Проверка на наличие команды 'exit' в введенном пользователем тексте
+        Проверяет наличие команд и делает запись через сооотвествующий класс
         """
 
-        return self.text_to_process == 'exit'
+        match self.user_text:
+            case str(text) if '/' in text:
+                pass
+            case str(text) if len(text.split()) == 2:
+                setattr(self, 'value', text.split()[0])
+                setattr(self, 'category', text.split()[1])
 
-    def check_command(self):
-        """
-        Проверка поступающего от пользовтеля текста на наличие команд
-        """
-
-        return '/' in self.text_to_process
-
-    def check_lenght(self):
-        """
-        Проверка, что в введенном пользователем тексте 2 слова
-        """
-
-        return len(self.split_text) == 2
-
-    def parse_single_expenses(self):
-        """
-        Разделение поступающего от пользовтеля текста на категорию затрат и сумму затрат
-        """
-
-        setattr(self, 'value', self.split_text[0])
-        setattr(self, 'category', self.split_text[1])
+                SE = SingleExpenses(self.category, self.value)
+                SE.write_single_expenses()
 
 
 class Calculate:
@@ -67,7 +32,7 @@ class Calculate:
     """
 
     def __init__(self):
-        self.reader = db.ReadFromTable()
+        self.reader = DB.ReadFromTable()
 
     def sum_day_expenses(self):
         """
@@ -101,24 +66,24 @@ class SingleExpenses:
 
     def __init__(self, category, value):
         self.date = str(datetime.date.today())
-        # self.date = '2022-05-28'
+        # self.date = '2022-05-28'  # (Данная строчка нужна кода нужна только при тестировании)
         self.category = category
         self.value = value
 
-        self.last_expenses = db.ReadFromTable().get_last_expenses()
-        self.last_day_expenses = db.ReadFromTable().get_last_month_expenses()
+        self.last_expenses = DB.ReadFromTable().get_last_expenses()
+        self.last_day_expenses = DB.ReadFromTable().get_last_month_expenses()
 
-        self.write = db.WriteToTable()
+        self.write = DB.WriteToTable()
     
     def change_day(self):
         """
         Смена даты
         """
 
-        db.CreateLog().write_day_log()
+        DB.CreateLog().write_day_log()
         self.check_last_day_expenses()
         self.write.write_month_expenses(self.day_id, self.date, Calculate().sum_day_expenses(), '0', '0')
-        db.ClearTable().clear_day_expenses()
+        DB.ClearTable().clear_day_expenses()
         self.expenses_id = '1'
 
     def change_month(self):
@@ -126,8 +91,8 @@ class SingleExpenses:
         Смена месяца
         """
 
-        db.CreateLog().write_month_log()
-        db.ClearTable().clear_month_expenses()
+        DB.CreateLog().write_month_log()
+        DB.ClearTable().clear_month_expenses()
         self.day_id = '1'
 
     def check_last_expenses(self):
@@ -175,8 +140,7 @@ class SingleExpenses:
             self.change_month()
         elif not self.check_day():
             self.change_day()
-            # self.day_id = str(int(self.day_id) + 1)
         else:
             self.check_last_expenses()
 
-        db.WriteToTable().write_single_expenses(self.expenses_id, self.date, self.category, self.value)
+        DB.WriteToTable().write_single_expenses(self.expenses_id, self.date, self.category, self.value)
