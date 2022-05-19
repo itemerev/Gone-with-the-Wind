@@ -6,10 +6,14 @@ def main():
     reader = DB.ReadFromTable()
 
     reader.read_day_expenses()
-    print(*reader.all_line)
+    print('----------')
+    for i in reader.all_line:
+        print(i)
 
     reader.read_month_expenses()
-    print(*reader.all_month)
+    print('----------')
+    for j in reader.all_month:
+        print(j)
 
     # DB.ClearTable().clear_day_expenses()
     # DB.ClearTable().clear_month_expenses()
