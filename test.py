@@ -3,11 +3,19 @@ import working_with_databases as DB
 
 
 def main():
-    DB.ClearTable().clear_day_expenses()
-    DB.ClearTable().clear_month_expenses()
+    reader = DB.ReadFromTable()
 
-    test = core.Event('100 taxi')
-    test.start()
+    reader.read_day_expenses()
+    print(*reader.all_line)
+
+    reader.read_month_expenses()
+    print(*reader.all_month)
+
+    # DB.ClearTable().clear_day_expenses()
+    # DB.ClearTable().clear_month_expenses()
+
+    # test = core.Event('100 taxi')
+    # test.start()
     
     # test = core.SingleExpenses('taxi', '100')
     # test.date = '2022-05-10'
