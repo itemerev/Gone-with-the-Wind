@@ -9,20 +9,42 @@ class Event:
 
     def __init__(self, user_text):
         self.text = user_text.split()
+        self.answer = 'None'
 
     def start(self):
         """
-        Проверяет наличие команд и делает запись через сооотвествующий класс
+        Проверяет наличие команд в вденном тексте
         """
         
         if '/' in self.text[0]:
+            """
+            При наличие команды, выполняет соотвествующую функцию
+            """
+
             match self.text[0]:
                 case '/RI':
                     setattr(self, 'value', self.text[1])
                     setattr(self, 'category', self.text[2])
                     ri = RegularIncome(self.value, self.category)
                     ri.add_regular_income()
+                    self.answer = (f'Даблен регулярный доход "{self.category}" в количестве {self.value} рублей')
+                case '/readRI':
+                    regular_income = DB.ReadFromTable().read_regular_income()
+                    text = ''
+                    for line in regular_income:
+                        text += str(line).strip('(').strip(')') + '\n'
+                    self.answer = text
+                case '/delRI':
+                    category = self.text[1]
+                    DB.DeleteFromTable().delete_regular_income(category)
+
+                    self.answer = (f'Регулярный доход "{category}" удален')
+
         elif len(self.text) == 2:
+            """
+            При отсутствии команды делает запись в разовые расходы
+            """
+
             setattr(self, 'value', self.text[0])
             setattr(self, 'category', self.text[1])
 
@@ -49,6 +71,10 @@ class Calculate:
 
 
 class RegularIncome:
+    """
+    Работа с данными регулярных доходов
+    """
+
     def __init__(self, value, category):
         self.ri_id = '1'
         self.value = value

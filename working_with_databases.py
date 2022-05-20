@@ -109,9 +109,21 @@ class WriteToTable(Connect):
         self.con.commit()
 
 
+class DeleteFromTable(Connect):
+    """
+    Удаление одной строки из таблиц
+    """
+    def __init__(self):
+        super().__init__()
+
+    def delete_regular_income(self, category):
+        self.cur.execute(f"DELETE FROM regular_income WHERE name_income='{category}'")
+        self.con.commit()
+
+
 class ClearTable(Connect):
     """
-    Удаление записей из таблиц
+    Удаление всех записей из таблиц
     """
 
     def __init__(self):
@@ -172,7 +184,7 @@ class ReadFromTable(Connect):
 
     def read_regular_income(self):
         self.cur.execute('SELECT * FROM regular_income')
-        self.all_line = self.cur.fetchall()
+        return self.cur.fetchall()
 
     def read_day_expenses(self):
         """
