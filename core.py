@@ -1,4 +1,5 @@
 import datetime
+import calendar
 import working_with_databases as DB
 
 
@@ -25,8 +26,8 @@ class Event:
                 case '/RI':
                     setattr(self, 'value', self.text[1])
                     setattr(self, 'category', self.text[2])
-                    ri = RegularIncome(self.value, self.category)
-                    ri.add_regular_income()
+                    ri = RegularIncome()
+                    ri.add_regular_income(self.value, self.category)
                     self.answer = (f'Даблен регулярный доход "{self.category}" в количестве {self.value} рублей')
                 case '/readRI':
                     regular_income = DB.ReadFromTable().read_regular_income()
@@ -51,6 +52,8 @@ class Event:
             SE = SingleExpenses(self.category, self.value)
             SE.write_single_expenses()
 
+            self.answer = f'Бюджет на день {Calculate().budget()} рублей\nРасходов за сегодня {Calculate().sum_day_expenses()} рублей\nЖелательно потратить не больше чем {int(Calculate().budget()) - int(Calculate().sum_day_expenses())} рублей'
+
 
 class Calculate:
     """
@@ -59,6 +62,7 @@ class Calculate:
 
     def __init__(self):
         self.reader = DB.ReadFromTable()
+        self.days = calendar.monthrange(int(str(datetime.date.today())[:4]), int(str(datetime.date.today())[5:7]))[1]
 
     def sum_day_expenses(self):
         """
@@ -69,33 +73,47 @@ class Calculate:
         expenses_list = [int(row[-1]) for row in self.reader.all_line]
         return str(sum(expenses_list))
 
+    def budget(self):
+        """
+        (Регулярные доходы + разовые доходы - регулярные расходы) и все это делить на количество дней в месяце
+        """
+
+        return str(round((int(RegularIncome().sum_regular_income) + int(SingleIncome().sum_single_income) - int(RegularExpenses().sum_regular_expenses)) / int(self.days)))
+
 
 class RegularIncome:
     """
     Работа с данными регулярных доходов
     """
 
-    def __init__(self, value, category):
-        self.ri_id = '1'
-        self.value = value
-        self.category = category
+    ri_id = '1'
+    sum_regular_income = '0'
+
+    def __init__(self):
+        self.last_line = DB.ReadFromTable().get_last_regular_income()
+        self.check_sum()
+
+    def check_sum(self):
+        if self.last_line:
+            all_regular_income = DB.ReadFromTable().read_regular_income()
+            for line in all_regular_income:
+                self.sum_regular_income = str(int(self.sum_regular_income) + int(line[2]))
 
     def check_id(self):
-        last_line = DB.ReadFromTable().get_last_regular_income()
-        if last_line:
-            self.ri_id = str(int(last_line[0]) + 1)
+        if self.last_line:
+            self.ri_id = str(int(self.last_line[0]) + 1)
 
-    def add_regular_income(self):
+    def add_regular_income(self, value, category):
         self.check_id()
         DB.WriteToTable().write_regular_income(self.ri_id, self.category, self.value)
 
 
 class SingleIncome:
-    pass
+    sum_single_income = '0'
 
 
 class RegularExpenses:
-    pass
+    sum_regular_expenses = '0'
 
 
 class SingleExpenses:
@@ -108,7 +126,7 @@ class SingleExpenses:
 
     def __init__(self, category, value):
         self.date = str(datetime.date.today())
-        # self.date = '2022-05-28'  # (Данная строчка нужна кода нужна только при тестировании)
+        # self.date = '2022-05-28'  # (Данная строка кода нужна только при тестировании)
         self.category = category
         self.value = value
 
@@ -124,7 +142,7 @@ class SingleExpenses:
 
         DB.CreateLog().write_day_log()
         self.check_last_day_expenses()
-        self.write.write_month_expenses(self.day_id, self.date, Calculate().sum_day_expenses(), '0', '0')
+        self.write.write_month_expenses(self.day_id, self.date, Calculate().sum_day_expenses(), Calculate().budget(), '0')
         DB.ClearTable().clear_day_expenses()
         self.expenses_id = '1'
 
