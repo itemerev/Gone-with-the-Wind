@@ -14,16 +14,16 @@ class Event:
         """
         Проверяет наличие команд и делает запись через сооотвествующий класс
         """
+        
+        if '/' in self.user_text:
+            pass
+        elif len(self.user_text.split()) == 2:
 
-        match self.user_text:
-            case str(text) if '/' in text:
-                pass
-            case str(text) if len(text.split()) == 2:
-                setattr(self, 'value', text.split()[0])
-                setattr(self, 'category', text.split()[1])
+            setattr(self, 'value', self.user_text.split()[0])
+            setattr(self, 'category', self.user_text.split()[1])
 
-                SE = SingleExpenses(self.category, self.value)
-                SE.write_single_expenses()
+            SE = SingleExpenses(self.category, self.value)
+            SE.write_single_expenses()
 
 
 class Calculate:
