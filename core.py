@@ -8,19 +8,23 @@ class Event:
     """
 
     def __init__(self, user_text):
-        self.user_text = user_text
+        self.text = user_text.split()
 
     def start(self):
         """
         Проверяет наличие команд и делает запись через сооотвествующий класс
         """
         
-        if '/' in self.user_text:
-            pass
-        elif len(self.user_text.split()) == 2:
-
-            setattr(self, 'value', self.user_text.split()[0])
-            setattr(self, 'category', self.user_text.split()[1])
+        if '/' in self.text[0]:
+            match self.text[0]:
+                case '/RI':
+                    setattr(self, 'value', self.text[1])
+                    setattr(self, 'category', self.text[2])
+                    ri = RegularIncome(self.value, self.category)
+                    ri.add_regular_income()
+        elif len(self.text) == 2:
+            setattr(self, 'value', self.text[0])
+            setattr(self, 'category', self.text[1])
 
             SE = SingleExpenses(self.category, self.value)
             SE.write_single_expenses()
@@ -45,7 +49,19 @@ class Calculate:
 
 
 class RegularIncome:
-    pass
+    def __init__(self, value, category):
+        self.ri_id = '1'
+        self.value = value
+        self.category = category
+
+    def check_id(self):
+        last_line = DB.ReadFromTable().get_last_regular_income()
+        if last_line:
+            self.ri_id = str(int(last_line[0]) + 1)
+
+    def add_regular_income(self):
+        self.check_id()
+        DB.WriteToTable().write_regular_income(self.ri_id, self.category, self.value)
 
 
 class SingleIncome:

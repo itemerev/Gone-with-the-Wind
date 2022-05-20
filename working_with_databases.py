@@ -83,6 +83,12 @@ class WriteToTable(Connect):
     """
     Запись данных в БД
     """
+    
+    def write_regular_income(self, regular_income_id, category, value):
+        regular_income = (regular_income_id, category, value)
+         
+        self.cur.execute("INSERT INTO regular_income VALUES(?, ?, ?);", regular_income)
+        self.con.commit()
 
     def write_single_expenses(self, single_id, date, category, value):
         """
@@ -143,6 +149,11 @@ class ReadFromTable(Connect):
         self.log_date = None
         self.all_month = None
 
+    def get_last_regular_income(self):
+
+        self.cur.execute('SELECT * FROM regular_income ORDER BY regular_income_id DESC LIMIT 1;')
+        return self.cur.fetchone()
+
     def get_last_expenses(self):
         """
         Чтение последней записи разовых расходов
@@ -158,6 +169,10 @@ class ReadFromTable(Connect):
 
         self.cur.execute('SELECT * FROM month_expenses ORDER BY day_expenses_id DESC limit 1;')
         return self.cur.fetchone()
+
+    def read_regular_income(self):
+        self.cur.execute('SELECT * FROM regular_income')
+        self.all_line = self.cur.fetchall()
 
     def read_day_expenses(self):
         """

@@ -14,6 +14,11 @@ def main():
     print('----------')
     for j in reader.all_month:
         print(j)
+    
+    print('----------')
+    reader.read_regular_income()
+    for k in reader.all_line:
+        print(k)
 
     # DB.ClearTable().clear_day_expenses()
     # DB.ClearTable().clear_month_expenses()
