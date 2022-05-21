@@ -12,7 +12,8 @@ class ConsoleApp:
 
         self.data = input()
 
-    def create_table(self):
+    @staticmethod
+    def create_table():
         """
         Создание таблиц в базе данных, если их не существует
         """

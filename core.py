@@ -19,7 +19,7 @@ class Event:
         
         if '/' in self.text[0]:
             """
-            При наличие команды, выполняет соотвествующую функцию
+            При наличии команды, выполняет соотвествующую ей функцию
             """
 
             match self.text[0]:
@@ -28,7 +28,7 @@ class Event:
                     setattr(self, 'category', self.text[2])
                     ri = RegularIncome()
                     ri.add_regular_income(self.value, self.category)
-                    self.answer = (f'Даблен регулярный доход "{self.category}" в количестве {self.value} рублей')
+                    self.answer = f'Даблен регулярный доход "{self.category}" в количестве {self.value} рублей'
                 case '/readRI':
                     regular_income = DB.ReadFromTable().read_regular_income()
                     text = ''
@@ -39,7 +39,7 @@ class Event:
                     category = self.text[1]
                     DB.DeleteFromTable().delete_regular_income(category)
 
-                    self.answer = (f'Регулярный доход "{category}" удален')
+                    self.answer = f'Регулярный доход "{category}" удален'
 
         elif len(self.text) == 2:
             """
@@ -52,7 +52,7 @@ class Event:
             SE = SingleExpenses(self.category, self.value)
             SE.write_single_expenses()
 
-            self.answer = f'Бюджет на день {Calculate().budget()} рублей\nРасходов за сегодня {Calculate().sum_day_expenses()} рублей\nЖелательно потратить не больше чем {int(Calculate().budget()) - int(Calculate().sum_day_expenses())} рублей'
+            self.answer = f'Бюджет на день {Calculate().budget()} рублей\nРасходов за сегодня {Calculate().sum_day_expenses()} рублей\nЖелательно потратить не больше чем {Calculate().balance()} рублей'
 
 
 class Calculate:
@@ -80,6 +80,9 @@ class Calculate:
 
         return str(round((int(RegularIncome().sum_regular_income) + int(SingleIncome().sum_single_income) - int(RegularExpenses().sum_regular_expenses)) / int(self.days)))
 
+    def balance(self):
+        return int(self.budget()) - int(self.sum_day_expenses())
+
 
 class RegularIncome:
     """
@@ -94,26 +97,44 @@ class RegularIncome:
         self.check_sum()
 
     def check_sum(self):
+        """
+        Пересчитывает сумму всех регулярных доходов
+        """
+
         if self.last_line:
             all_regular_income = DB.ReadFromTable().read_regular_income()
             for line in all_regular_income:
                 self.sum_regular_income = str(int(self.sum_regular_income) + int(line[2]))
 
     def check_id(self):
+        """
+        Вычисляет id для последующей записи регулярных доходов
+        """
+
         if self.last_line:
             self.ri_id = str(int(self.last_line[0]) + 1)
 
     def add_regular_income(self, value, category):
+        """
+        Добавляет запись о регулрных расходов в базу данных
+        """
+
         self.check_id()
-        DB.WriteToTable().write_regular_income(self.ri_id, self.category, self.value)
+        DB.WriteToTable().write_regular_income(self.ri_id, value, category)
 
 
 class SingleIncome:
     sum_single_income = '0'
 
+    def __init__(self):
+        pass
+
 
 class RegularExpenses:
     sum_regular_expenses = '0'
+
+    def __init__(self):
+        pass
 
 
 class SingleExpenses:
@@ -142,7 +163,7 @@ class SingleExpenses:
 
         DB.CreateLog().write_day_log()
         self.check_last_day_expenses()
-        self.write.write_month_expenses(self.day_id, self.date, Calculate().sum_day_expenses(), Calculate().budget(), '0')
+        self.write.write_month_expenses(self.day_id, self.date, Calculate().sum_day_expenses(), Calculate().budget(), Calculate().balance())
         DB.ClearTable().clear_day_expenses()
         self.expenses_id = '1'
 

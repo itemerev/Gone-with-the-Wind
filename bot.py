@@ -19,6 +19,7 @@ def create_all_tables():
     DB.CreateTables().create_day_expenses()
     DB.CreateTables().create_month_expenses()
 
+
 @dp.message_handler()
 async def echo(message: types.Message):
     """
