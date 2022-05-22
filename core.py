@@ -166,7 +166,7 @@ class SingleExpenses:
 
         DB.CreateLog().write_day_log()
         self.check_last_day_expenses()
-        self.write.write_month_expenses(self.day_id, self.date, calc.sum_day_expenses(), calc.budget(), calc.balance()
+        self.write.write_month_expenses(self.day_id, self.date, calc.sum_day_expenses(), calc.budget(), calc.balance())
         # Перенести баланс в конце дня в разовые доходы
         DB.ClearTable().clear_day_expenses()
         self.expenses_id = '1'
@@ -175,7 +175,8 @@ class SingleExpenses:
         """
         Смена месяца
         """
-
+        
+        # TODO: При смене дня необходимо создать директории для хранения ежедневных и ежемесячных логов (если они. директории. отсутсвуют)
         DB.CreateLog().write_month_log()
         DB.ClearTable().clear_month_expenses()
         self.day_id = '1'
