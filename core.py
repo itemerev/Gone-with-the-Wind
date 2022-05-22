@@ -155,15 +155,19 @@ class SingleExpenses:
         self.last_day_expenses = DB.ReadFromTable().get_last_month_expenses()
 
         self.write = DB.WriteToTable()
-    
+
+
     def change_day(self):
         """
         Смена даты
         """
 
+        calc = Calculate()
+
         DB.CreateLog().write_day_log()
         self.check_last_day_expenses()
-        self.write.write_month_expenses(self.day_id, self.date, Calculate().sum_day_expenses(), Calculate().budget(), Calculate().balance())
+        self.write.write_month_expenses(self.day_id, self.date, calc.sum_day_expenses(), calc.budget(), calc.balance()
+        # Перенести баланс в конце дня в разовые доходы
         DB.ClearTable().clear_day_expenses()
         self.expenses_id = '1'
 
