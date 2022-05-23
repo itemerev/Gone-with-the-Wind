@@ -1,4 +1,6 @@
 import sqlite3
+import os
+import datetime
 
 
 class Connect:
@@ -90,6 +92,12 @@ class WriteToTable(Connect):
         self.cur.execute("INSERT INTO regular_income VALUES(?, ?, ?);", regular_income)
         self.con.commit()
 
+    def write_single_income(self, single_income_id, date, category, value):
+        single_income = (single_income_id, date, category, value)
+
+        self.cur.execute("INSERT INTO single_income VALUES(?, ?, ?, ?);", single_income)
+        self.con.commit()
+
     def write_single_expenses(self, single_id, date, category, value):
         """
         Запись разовых расходов в БД в таблицу расходов за день
@@ -165,6 +173,15 @@ class ReadFromTable(Connect):
 
         self.cur.execute('SELECT * FROM regular_income ORDER BY regular_income_id DESC LIMIT 1;')
         return self.cur.fetchone()
+    
+    def get_last_single_income(self):
+
+        self.cur.execute('SELECT * FROM single_income ORDER BY single_income_id DESC LIMIT 1;')
+        return self.cur.fetchone()
+
+    def get_today_income(self):
+        today = str(datetime.date.today())
+        self.cur.execute(f'SELECT * FROM single_income WHERE date={today}')
 
     def get_last_expenses(self):
         """
@@ -212,6 +229,8 @@ class CreateLog:
 
     def __init__(self):
         self.reader = ReadFromTable()
+        if not os.path.isdir('Logs'):
+            os.mkdir('Logs')
 
     def write_day_log(self):
         """
@@ -219,7 +238,7 @@ class CreateLog:
         """
 
         self.reader.read_day_expenses()
-        with open(f'Logs/Day/{self.reader.log_date}.txt', 'w', encoding='utf-8') as log_file:
+        with open(f'Logs/{self.reader.log_date}.txt', 'w', encoding='utf-8') as log_file:
             for line in self.reader.all_line:
                 log_file.write(str(line) + '\n')
 
@@ -229,6 +248,6 @@ class CreateLog:
         """
         
         self.reader.read_month_expenses()
-        with open(f'Logs/Month/{self.reader.log_date[:-3]}.txt', 'w', encoding='utf-8') as month_log:
+        with open(f'Logs/{self.reader.log_date[:-3]}.txt', 'w', encoding='utf-8') as month_log:
             for line in self.reader.all_month:
                 month_log.write(str(line) + '\n')

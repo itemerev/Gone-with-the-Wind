@@ -38,16 +38,25 @@ class Event:
                 case '/delRI':
                     category = self.text[1]
                     DB.DeleteFromTable().delete_regular_income(category)
-
                     self.answer = f'Регулярный доход "{category}" удален'
+                case '/SI':
+                    setattr(self, 'value', self.text[1])
+                    setattr(self, 'category', self.text[2])
+                    si = SingleIncome()
+                    si.add_single_income(self.category, self.value)
+                    self.answer = f'Add "{self.category}" as {self.value}'
 
         elif len(self.text) == 2:
             """
             При отсутствии команды делает запись в разовые расходы
             """
 
-            setattr(self, 'value', self.text[0])
-            setattr(self, 'category', self.text[1])
+            if self.text[0].isdigit():
+                setattr(self, 'value', self.text[0])
+                setattr(self, 'category', self.text[1])
+            else:
+                setattr(self, 'value', self.text[1])
+                setattr(self, 'category', self.text[0])
 
             SE = SingleExpenses(self.category, self.value)
             SE.write_single_expenses()
@@ -70,7 +79,7 @@ class Calculate:
         """
 
         self.reader.read_day_expenses()
-        expenses_list = [int(row[-1]) for row in self.reader.all_line]
+        expenses_list = [int(row[-1]) for row in self.reader.all_line if row[-1].isdigit()]
         return str(sum(expenses_list))
 
     def budget(self):
@@ -78,10 +87,12 @@ class Calculate:
         (Регулярные доходы + разовые доходы - регулярные расходы) и все это делить на количество дней в месяце
         """
 
-        return str(round((int(RegularIncome().sum_regular_income) + int(SingleIncome().sum_single_income) - int(RegularExpenses().sum_regular_expenses)) / int(self.days)))
+        return str(round((int(RegularIncome().sum_regular_income) - int(RegularExpenses().sum_regular_expenses)) / int(self.days)))
 
     def balance(self):
-        return int(self.budget()) - int(self.sum_day_expenses())
+        single = SingleIncome()
+        single.check_income()
+        return int(self.budget()) + int(single.today_income) - int(self.sum_day_expenses())
 
 
 class RegularIncome:
@@ -124,10 +135,26 @@ class RegularIncome:
 
 
 class SingleIncome:
-    sum_single_income = '0'
+    single_income_id = '1'
+    today_income = '0'
+    all_today_income = None
 
     def __init__(self):
-        pass
+        self.last_line = DB.ReadFromTable().get_last_single_income()
+
+    def check_income(self):
+        self.all_today_income = DB.ReadFromTable().get_today_income()
+        if self.all_today_income:
+            for line in self.all_today_income():
+                self.today_income = str(int(self.today_income) + int(line[-1]))
+    
+    def check_id(self):
+        if self.last_line:
+            self.single_income_id = str(int(self.last_line[0]) + 1)
+
+    def add_single_income(self, category, value):
+        self.check_id()
+        DB.WriteToTable().write_single_income(self.single_income_id, str(datetime.date.today()), category, value)
 
 
 class RegularExpenses:
@@ -176,7 +203,6 @@ class SingleExpenses:
         Смена месяца
         """
         
-        # TODO: При смене дня необходимо создать директории для хранения ежедневных и ежемесячных логов (если они. директории. отсутсвуют)
         DB.CreateLog().write_month_log()
         DB.ClearTable().clear_month_expenses()
         self.day_id = '1'
