@@ -44,7 +44,7 @@ class Event:
                     setattr(self, 'category', self.text[2])
                     si = SingleIncome()
                     si.add_single_income(self.category, self.value)
-                    self.answer = f'Add "{self.category}" as {self.value}'
+                    self.answer = f'Добавлен разовый доход "{self.category}" в размере {self.value} рублей'
 
         elif len(self.text) == 2:
             """
@@ -86,13 +86,13 @@ class Calculate:
         """
         (Регулярные доходы + разовые доходы - регулярные расходы) и все это делить на количество дней в месяце
         """
-
-        return str(round((int(RegularIncome().sum_regular_income) - int(RegularExpenses().sum_regular_expenses)) / int(self.days)))
-
-    def balance(self):
         single = SingleIncome()
         single.check_income()
-        return int(self.budget()) + int(single.today_income) - int(self.sum_day_expenses())
+        return str(round((int(RegularIncome().sum_regular_income) - int(RegularExpenses().sum_regular_expenses)) / int(self.days)) + int(single.today_income))
+
+    def balance(self):
+
+        return int(self.budget()) - int(self.sum_day_expenses())
 
 
 class RegularIncome:
@@ -145,7 +145,7 @@ class SingleIncome:
     def check_income(self):
         self.all_today_income = DB.ReadFromTable().get_today_income()
         if self.all_today_income:
-            for line in self.all_today_income():
+            for line in self.all_today_income:
                 self.today_income = str(int(self.today_income) + int(line[-1]))
     
     def check_id(self):
@@ -174,7 +174,6 @@ class SingleExpenses:
 
     def __init__(self, category, value):
         self.date = str(datetime.date.today())
-        # self.date = '2022-05-28'  # (Данная строка кода нужна только при тестировании)
         self.category = category
         self.value = value
 
@@ -182,7 +181,6 @@ class SingleExpenses:
         self.last_day_expenses = DB.ReadFromTable().get_last_month_expenses()
 
         self.write = DB.WriteToTable()
-
 
     def change_day(self):
         """
@@ -194,7 +192,7 @@ class SingleExpenses:
         DB.CreateLog().write_day_log()
         self.check_last_day_expenses()
         self.write.write_month_expenses(self.day_id, self.date, calc.sum_day_expenses(), calc.budget(), calc.balance())
-        # Перенести баланс в конце дня в разовые доходы
+        SingleIncome().add_single_income('Остаток с прошлого дня', self.last_day_expenses[-1])
         DB.ClearTable().clear_day_expenses()
         self.expenses_id = '1'
 

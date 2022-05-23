@@ -97,6 +97,7 @@ class WriteToTable(Connect):
 
         self.cur.execute("INSERT INTO single_income VALUES(?, ?, ?, ?);", single_income)
         self.con.commit()
+        print('добавлено в таблицу', single_income)
 
     def write_single_expenses(self, single_id, date, category, value):
         """
@@ -181,7 +182,8 @@ class ReadFromTable(Connect):
 
     def get_today_income(self):
         today = str(datetime.date.today())
-        self.cur.execute(f'SELECT * FROM single_income WHERE date={today}')
+        self.cur.execute(f'SELECT * FROM single_income WHERE date="{today}"')
+        return self.cur.fetchall()
 
     def get_last_expenses(self):
         """
