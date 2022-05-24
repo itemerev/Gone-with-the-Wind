@@ -12,6 +12,33 @@ class Event:
         self.text = user_text.split()
         self.answer = 'None'
 
+        self.commands = {
+            '/RI': self.ri(),
+            '/readRI': self.read_ri(),
+            '/delRI': self.del_ri(),
+            '/SI': self.si(),
+        }
+
+    def ri(self):
+        RegularIncome().add_regular_income(self.text[2], self.text[1])
+        self.answer = f'Даблен регулярный доход "{self.text[2]}" в количестве {self.text[1]} рублей'
+
+    def read_ri(self):
+        regular_income = DB.ReadFromTable().read_regular_income()
+        answer_text = ''
+        for line in regular_income:
+            answer_text += str(line).strip('(').strip(')') + '\n'
+        self.answer = answer_text
+
+    def del_ri(self):
+        category = self.text[1]
+        DB.DeleteFromTable().delete_regular_income(category)
+        self.answer = f'Регулярный доход "{category}" удален'
+
+    def si(self):
+        SingleIncome.add_single_income(self.text[2], self.text[1])
+        self.answer = f'Добавлен разовый доход "{self.text[2]}" в размере {self.text[1]} рублей'
+
     def start(self):
         """
         Проверяет наличие команд в вденном тексте
@@ -22,29 +49,7 @@ class Event:
             При наличии команды, выполняет соотвествующую ей функцию
             """
 
-            match self.text[0]:
-                case '/RI':
-                    setattr(self, 'value', self.text[1])
-                    setattr(self, 'category', self.text[2])
-                    ri = RegularIncome()
-                    ri.add_regular_income(self.value, self.category)
-                    self.answer = f'Даблен регулярный доход "{self.category}" в количестве {self.value} рублей'
-                case '/readRI':
-                    regular_income = DB.ReadFromTable().read_regular_income()
-                    text = ''
-                    for line in regular_income:
-                        text += str(line).strip('(').strip(')') + '\n'
-                    self.answer = text
-                case '/delRI':
-                    category = self.text[1]
-                    DB.DeleteFromTable().delete_regular_income(category)
-                    self.answer = f'Регулярный доход "{category}" удален'
-                case '/SI':
-                    setattr(self, 'value', self.text[1])
-                    setattr(self, 'category', self.text[2])
-                    si = SingleIncome()
-                    si.add_single_income(self.category, self.value)
-                    self.answer = f'Добавлен разовый доход "{self.category}" в размере {self.value} рублей'
+            return self.commands[self.text[0]]
 
         elif len(self.text) == 2:
             """
