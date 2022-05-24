@@ -17,6 +17,11 @@ class Event:
             '/readRI': self.read_ri(),
             '/delRI': self.del_ri(),
             '/SI': self.si(),
+            '/readSI': self.read_si(),
+            '/delSI': self.del_si(),
+            '/RE': self.re(),
+            '/readRE': self.read_re(),
+            '/delRE': self.del_re()
         }
 
     def ri(self):
@@ -38,6 +43,29 @@ class Event:
     def si(self):
         SingleIncome.add_single_income(self.text[2], self.text[1])
         self.answer = f'Добавлен разовый доход "{self.text[2]}" в размере {self.text[1]} рублей'
+
+    def read_si(self):
+        single_income = DB.ReadFromTable().read_single_income()
+        answer_text = ''
+        for line in single_income:
+            answer_text += str(line).strip('(').strip(')') + '\n'
+        self.answer = answer_text
+
+    def del_si(self):
+        pass
+
+    def re(self):
+        pass
+
+    def read_re(self):
+        regular_expenses = DB.ReadFromTable().read_regular_expenses()
+        answer_text = ''
+        for line in regular_expenses:
+            answer_text += str(line).strip('(').strip(')') + '\n'
+        self.answer = answer_text
+
+    def del_re(self):
+        pass
 
     def start(self):
         """

@@ -205,6 +205,14 @@ class ReadFromTable(Connect):
         self.cur.execute('SELECT * FROM regular_income')
         return self.cur.fetchall()
 
+    def read_single_income(self):
+        self.cur.execute('SELECT * FROM single_income')
+        return self.cur.fetchall()
+
+    def read_regular_expenses(self):
+        self.cur.execute('SELECT * FROM regular_expenses')
+        return self.cur.fetchall()
+
     def read_day_expenses(self):
         """
         Чтение всех расходов за день
