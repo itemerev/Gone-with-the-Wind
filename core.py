@@ -55,7 +55,8 @@ class Event:
         pass
 
     def re(self):
-        pass
+        RegularExpenses().add_regular_expenses(self.text[2], self.text[1])
+        self.answer = f'Даблен регулярный rashod "{self.text[2]}" в количестве {self.text[1]} рублей'
 
     def read_re(self):
         regular_expenses = DB.ReadFromTable().read_regular_expenses()
@@ -191,10 +192,19 @@ class SingleIncome:
 
 
 class RegularExpenses:
+    re_id = '1'
     sum_regular_expenses = '0'
 
     def __init__(self):
-        pass
+        self.last_line = DB.ReadFromTable().get_last_regular_expenses()
+    
+    def check_id(self):
+        if self.last_line:
+            self.r_id - str(int(self.last_line[0] + 1))
+
+    def add_regular_expenses(self):
+        self.check_id()
+        DB.WriteToTable().write_regular_expenses(self.re_id, category, value)
 
 
 class SingleExpenses:
