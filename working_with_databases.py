@@ -97,7 +97,6 @@ class WriteToTable(Connect):
 
         self.cur.execute("INSERT INTO single_income VALUES(?, ?, ?, ?);", single_income)
         self.con.commit()
-        print('добавлено в таблицу', single_income)
 
     def write_single_expenses(self, single_id, date, category, value):
         """

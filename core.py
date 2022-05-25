@@ -13,15 +13,15 @@ class Event:
         self.answer = 'None'
 
         self.commands = {
-            '/RI': self.ri(),
-            '/readRI': self.read_ri(),
-            '/delRI': self.del_ri(),
-            '/SI': self.si(),
-            '/readSI': self.read_si(),
-            '/delSI': self.del_si(),
-            '/RE': self.re(),
-            '/readRE': self.read_re(),
-            '/delRE': self.del_re()
+            '/RI': self.ri,
+            '/readRI': self.read_ri,
+            '/delRI': self.del_ri,
+            '/SI': self.si,
+            '/readSI': self.read_si,
+            '/delSI': self.del_si,
+            '/RE': self.re,
+            '/readRE': self.read_re,
+            '/delRE': self.del_re
         }
 
     def ri(self):
@@ -77,7 +77,7 @@ class Event:
             При наличии команды, выполняет соотвествующую ей функцию
             """
 
-            return self.commands[self.text[0]]
+            return self.commands[self.text[0]]()
 
         elif len(self.text) == 2:
             """
