@@ -100,6 +100,9 @@ class WriteToTable(Connect):
 
     def write_regular_expenses(self, regular_expenses_id, category, value):
         regular_expenses = (regular_expenses_id, category, value)
+        
+        self.cur.execute('INSERT INTO regular_expenses VALUES(?, ?, ?);', regular_expenses)
+        self.con.commit()
 
     def write_single_expenses(self, single_id, date, category, value):
         """
