@@ -52,11 +52,13 @@ class Event:
         self.answer = answer_text
 
     def del_si(self):
-        pass
+        category = self.text[1]
+        DB.DeleteFromTable().delete_single_income(category)
+        self.answer = f'"{category}" удален из разовых доходов'
 
     def re(self):
         RegularExpenses().add_regular_expenses(self.text[2], self.text[1])
-        self.answer = f'Даблен регулярный rashod "{self.text[2]}" в количестве {self.text[1]} рублей'
+        self.answer = f'"{self.text[2]}" в количестве {self.text[1]} рублей добавлено в регулярные расходы'
 
     def read_re(self):
         regular_expenses = DB.ReadFromTable().read_regular_expenses()
@@ -66,7 +68,9 @@ class Event:
         self.answer = answer_text
 
     def del_re(self):
-        pass
+        category = self.text[1]
+        DB.DeleteFromTable().delete_regular_expenses(category)
+        self.answer = f'"{category}" удален из регулярных расходов'
 
     def start(self):
         """
