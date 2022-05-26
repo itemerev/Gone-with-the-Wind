@@ -204,7 +204,7 @@ class RegularExpenses:
     
     def check_id(self):
         if self.last_line:
-            self.re_id - str(int(self.last_line[0]) + 1)
+            self.re_id = str(int(self.last_line[0]) + 1)
 
     def add_regular_expenses(self, category, value):
         self.check_id()
