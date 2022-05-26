@@ -239,7 +239,8 @@ class SingleExpenses:
         DB.CreateLog().write_day_log()
         self.check_last_day_expenses()
         self.write.write_month_expenses(self.day_id, self.date, calc.sum_day_expenses(), calc.budget(), calc.balance())
-        SingleIncome().add_single_income('Остаток с прошлого дня', self.last_day_expenses[-1])
+        if self.last_day_expenses:
+            SingleIncome().add_single_income('Остаток с прошлого дня', self.last_day_expenses[-1])
         DB.ClearTable().clear_day_expenses()
         self.expenses_id = '1'
 
