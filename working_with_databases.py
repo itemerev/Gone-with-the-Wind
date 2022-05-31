@@ -142,6 +142,10 @@ class DeleteFromTable(Connect):
         self.cur.execute(f"DELETE FROM single_income WHERE name_income='{category}'")
         self.con.commit()
 
+    def delete_single_expenses(self, expense_id):
+        self.cur.execute(f"DELETE FROM day_expenses WHERE single_expenses_id='{expense_id}'")
+        self.con.commit()
+
 
 class ClearTable(Connect):
     """

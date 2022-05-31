@@ -21,7 +21,10 @@ class Event:
             '/delSI': self.del_si,
             '/RE': self.re,
             '/readRE': self.read_re,
-            '/delRE': self.del_re
+            '/delRE': self.del_re,
+            '/readDAY': self.read_day,
+            '/readMON': self.read_mon,
+            '/delDAY': self.del_day
         }
 
     def ri(self):
@@ -30,9 +33,11 @@ class Event:
 
     def read_ri(self):
         regular_income = DB.ReadFromTable().read_regular_income()
-        answer_text = ''
-        for line in regular_income:
-            answer_text += str(line).strip('(').strip(')') + '\n'
+        answer_text = 'Пусто'
+        if regular_income:
+            for line in regular_income:
+                answer_text = ''
+                answer_text += str(line).strip('(').strip(')') + '\n'
         self.answer = answer_text
 
     def del_ri(self):
@@ -46,9 +51,11 @@ class Event:
 
     def read_si(self):
         single_income = DB.ReadFromTable().read_single_income()
-        answer_text = ''
-        for line in single_income:
-            answer_text += str(line).strip('(').strip(')') + '\n'
+        answer_text = 'Пусто'
+        if single_income:
+            for line in single_income:
+                answer_text = ''
+                answer_text += str(line).strip('(').strip(')') + '\n'
         self.answer = answer_text
 
     def del_si(self):
@@ -62,15 +69,40 @@ class Event:
 
     def read_re(self):
         regular_expenses = DB.ReadFromTable().read_regular_expenses()
-        answer_text = ''
-        for line in regular_expenses:
-            answer_text += str(line).strip('(').strip(')') + '\n'
+        answer_text = 'Пусто'
+        if regular_expenses:
+            for line in regular_expenses:
+                answer_text = ''
+                answer_text += str(line).strip('(').strip(')') + '\n'
         self.answer = answer_text
 
     def del_re(self):
         category = self.text[1]
         DB.DeleteFromTable().delete_regular_expenses(category)
         self.answer = f'"{category}" удален из регулярных расходов'
+    
+    def read_day(self):
+        day_expenses = DB.ReadFromTable().read_day_expenses()
+        answer_text = 'Пусто'
+        if day_expenses:
+            for line in day_expenses:
+                answer_text = ''
+                answer_text += str(line).strip('(').strip(')') + '\n'
+        self.answer = answer_text
+
+    def read_mon(self):
+        mon_expenses = DB.ReadFromTable().read_month_expenses()
+        answer_text = 'Пусто'
+        if mon_expenses:
+            for line in mon_expenses:
+                answer_text = ''
+                answer_text += str(line).strip('(').strip(')') + '\n'
+        self.answer = answer_text
+
+    def del_day(self):
+        expense_id = self.text[1]
+        DB.DeleteFromTable().delete_single_expenses(expense_id)
+        self.answer = f'Запись под номером "{expense_id}" удалена из таблицы текущих расходов'
 
     def start(self):
         """
