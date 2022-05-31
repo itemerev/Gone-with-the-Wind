@@ -35,8 +35,8 @@ class Event:
         regular_income = DB.ReadFromTable().read_regular_income()
         answer_text = 'Пусто'
         if regular_income:
+            answer_text = ''
             for line in regular_income:
-                answer_text = ''
                 answer_text += str(line).strip('(').strip(')') + '\n'
         self.answer = answer_text
 
@@ -53,8 +53,8 @@ class Event:
         single_income = DB.ReadFromTable().read_single_income()
         answer_text = 'Пусто'
         if single_income:
+            answer_text = ''
             for line in single_income:
-                answer_text = ''
                 answer_text += str(line).strip('(').strip(')') + '\n'
         self.answer = answer_text
 
@@ -71,8 +71,8 @@ class Event:
         regular_expenses = DB.ReadFromTable().read_regular_expenses()
         answer_text = 'Пусто'
         if regular_expenses:
+            answer_text = ''
             for line in regular_expenses:
-                answer_text = ''
                 answer_text += str(line).strip('(').strip(')') + '\n'
         self.answer = answer_text
 
@@ -85,8 +85,8 @@ class Event:
         day_expenses = DB.ReadFromTable().read_day_expenses()
         answer_text = 'Пусто'
         if day_expenses:
+            answer_text = ''
             for line in day_expenses:
-                answer_text = ''
                 answer_text += str(line).strip('(').strip(')') + '\n'
         self.answer = answer_text
 
@@ -94,8 +94,8 @@ class Event:
         mon_expenses = DB.ReadFromTable().read_month_expenses()
         answer_text = 'Пусто'
         if mon_expenses:
+            answer_text = ''
             for line in mon_expenses:
-                answer_text = ''
                 answer_text += str(line).strip('(').strip(')') + '\n'
         self.answer = answer_text
 
