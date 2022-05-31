@@ -232,7 +232,14 @@ class RegularExpenses:
 
     def __init__(self):
         self.last_line = DB.ReadFromTable().get_last_regular_expenses()
+        self.check_sum()
     
+    def check_sum(self):
+        if self.last_line:
+            all_regular_expenses = DB.ReadFromTable().read_regular_income()
+            for line in all_regular_income:
+                self.sum_regular_expenses = str(int(self.sum_regular_expenses) + int(line[2]))
+
     def check_id(self):
         if self.last_line:
             self.re_id = str(int(self.last_line[0]) + 1)
