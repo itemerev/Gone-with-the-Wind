@@ -256,9 +256,9 @@ class CreateLog:
         Логирование всех расходов за день в файл '{дата}.txt'
         """
 
-        self.reader.read_day_expenses()
-        with open(f'Logs/{self.reader.log_date}.txt', 'w', encoding='utf-8') as log_file:
-            for line in self.reader.all_line:
+        all_line = self.reader.read_day_expenses()
+        with open(f'Logs/{all_line[0][1]}.txt', 'w', encoding='utf-8') as log_file:
+            for line in all_line:
                 log_file.write(str(line) + '\n')
 
     def write_month_log(self):
@@ -266,7 +266,7 @@ class CreateLog:
         Логирование всех расходов за месяц в файл '{год-месяц}.txt'
         """
         
-        self.reader.read_month_expenses()
-        with open(f'Logs/{self.reader.log_date[:-3]}.txt', 'w', encoding='utf-8') as month_log:
-            for line in self.reader.all_month:
+        all_month = self.reader.read_month_expenses()
+        with open(f'Logs/{all_month[0][1][:-3]}.txt', 'w', encoding='utf-8') as month_log:
+            for line in all_month:
                 month_log.write(str(line) + '\n')
