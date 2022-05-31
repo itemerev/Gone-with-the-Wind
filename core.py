@@ -41,7 +41,7 @@ class Event:
         self.answer = f'Регулярный доход "{category}" удален'
 
     def si(self):
-        SingleIncome.add_single_income(self.text[2], self.text[1])
+        SingleIncome().add_single_income(self.text[2], self.text[1])
         self.answer = f'Добавлен разовый доход "{self.text[2]}" в размере {self.text[1]} рублей'
 
     def read_si(self):
@@ -238,8 +238,7 @@ class SingleExpenses:
         DB.CreateLog().write_day_log()
         self.check_last_day_expenses()
         self.write.write_month_expenses(self.day_id, self.date, calc.sum_day_expenses(), calc.budget(), calc.balance())
-        if self.last_day_expenses:
-            SingleIncome().add_single_income('Остаток с прошлого дня', self.last_day_expenses[-1])
+        SingleIncome().add_single_income('Остаток с прошлого дня', calc.balance())
         DB.ClearTable().clear_day_expenses()
         self.expenses_id = '1'
 
