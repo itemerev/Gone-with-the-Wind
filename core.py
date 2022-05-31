@@ -116,8 +116,7 @@ class Calculate:
         Сумма всех расходов в течение дня
         """
 
-        self.reader.read_day_expenses()
-        expenses_list = [int(row[-1]) for row in self.reader.all_line if row[-1].isdigit()]
+        expenses_list = [int(row[-1]) for row in self.reader.read_day_expenses() if row[-1].isdigit()]
         return str(sum(expenses_list))
 
     def budget(self):

@@ -4,5 +4,6 @@ venv/
 Logs/
 .py[cod]
 *.db
+read.py
 
 config.py

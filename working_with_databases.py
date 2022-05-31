@@ -176,13 +176,6 @@ class ReadFromTable(Connect):
     def __init__(self):
         super().__init__()
 
-        self.last_expenses = None
-        self.last_day_expenses = None
-
-        self.all_line = None
-        self.log_date = None
-        self.all_month = None
-
     def get_last_regular_income(self):
 
         self.cur.execute('SELECT * FROM regular_income ORDER BY regular_income_id DESC LIMIT 1;')
@@ -237,8 +230,7 @@ class ReadFromTable(Connect):
         """
 
         self.cur.execute('SELECT * FROM day_expenses')
-        self.all_line = self.cur.fetchall()
-        self.log_date = self.all_line[0][1]
+        return self.cur.fetchall()
 
     def read_month_expenses(self):
         """
@@ -246,8 +238,7 @@ class ReadFromTable(Connect):
         """
         
         self.cur.execute('SELECT * FROM month_expenses')
-        self.all_month = self.cur.fetchall()
-        self.log_date = self.all_month[0][1]
+        return self.cur.fetchall()
 
 
 class CreateLog:
