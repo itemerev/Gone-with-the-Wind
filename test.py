@@ -1,7 +1,7 @@
 
 import os
 
-os.remove('gone_wind.db')
+# os.remove('gone_wind.db')
 
 from bot import create_all_tables as cr
 from core import *
@@ -74,7 +74,7 @@ def testing():
         for j in range(5):
             date = f'2022-0{str(5 + k)}-0{str(1 + j)}'
             for i in range(5):
-                one_event = TestEvent(f'100 test{str(i)}')
+                one_event = TestEvent(f'210 test{str(i)}')
                 one_event.start(date)
                 print(one_event.answer)
             print('---')
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     cr()
     make_data()
     os.remove('gone_wind.db')
-
+    print(DB.ReadFromTable().get_today_income())
 
 
 
