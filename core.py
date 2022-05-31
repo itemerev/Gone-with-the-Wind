@@ -237,7 +237,7 @@ class RegularExpenses:
     def check_sum(self):
         if self.last_line:
             all_regular_expenses = DB.ReadFromTable().read_regular_income()
-            for line in all_regular_income:
+            for line in all_regular_expenses:
                 self.sum_regular_expenses = str(int(self.sum_regular_expenses) + int(line[2]))
 
     def check_id(self):
