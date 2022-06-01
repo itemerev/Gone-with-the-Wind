@@ -1,3 +1,10 @@
+#!/usrbin/env python3
+
+# version 1.0
+
+# author Ilya Temerev
+# email kidmoto@yandex.ru
+
 import core
 import working_with_databases as DB
 from aiogram import Bot, Dispatcher, executor, types
