@@ -236,7 +236,7 @@ class RegularExpenses:
     
     def check_sum(self):
         if self.last_line:
-            all_regular_expenses = DB.ReadFromTable().read_regular_income()
+            all_regular_expenses = DB.ReadFromTable().read_regular_expenses()
             for line in all_regular_expenses:
                 self.sum_regular_expenses = str(int(self.sum_regular_expenses) + int(line[2]))
 
