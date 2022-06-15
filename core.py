@@ -131,7 +131,7 @@ class Event:
             SE = SingleExpenses(self.category, self.value)
             SE.write_single_expenses()
 
-            self.answer = f'Бюджет на день {Calculate().budget() + Calculate().single.today_income} рублей\nРасходов за сегодня {Calculate().sum_day_expenses()} рублей\nЖелательно потратить не больше чем {Calculate().balance()} рублей'
+            self.answer = f'Бюджет на день {int(Calculate().budget()) + int(Calculate().single.today_income)} рублей\nРасходов за сегодня {Calculate().sum_day_expenses()} рублей\nЖелательно потратить не больше чем {Calculate().balance()} рублей'
 
 
 class Calculate:
