@@ -109,11 +109,11 @@ class Event:
         Проверяет наличие команд в вденном тексте
         """
         
-        if '/' in self.text[0]:
+        if '/' in self.text[0] and self.text[0] in self.command:
             """
             При наличии команды, выполняет соотвествующую ей функцию
             """
-
+            
             return self.commands[self.text[0]]()
 
         elif len(self.text) == 2:
@@ -157,7 +157,7 @@ class Calculate:
         """
         (Регулярные доходы + разовые доходы - регулярные расходы) и все это делить на количество дней в месяце
         """
-        return str(round(int(RegularIncome().sum_regular_income) - int(RegularExpenses().sum_regular_expenses)) / int(self.days))
+        return str(round(int(RegularIncome().sum_regular_income) - int(RegularExpenses().sum_regular_expenses) / int(self.days)))
 
     def balance(self):
 
