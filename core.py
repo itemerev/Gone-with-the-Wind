@@ -157,7 +157,7 @@ class Calculate:
         """
         (Регулярные доходы + разовые доходы - регулярные расходы) и все это делить на количество дней в месяце
         """
-        return str(round(int(RegularIncome().sum_regular_income) - int(RegularExpenses().sum_regular_expenses) / int(self.days)))
+        return str(round((int(RegularIncome().sum_regular_income) - int(RegularExpenses().sum_regular_expenses)) / int(self.days)))
 
     def balance(self):
 
