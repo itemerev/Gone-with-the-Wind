@@ -131,7 +131,7 @@ class Event:
             SE = SingleExpenses(self.category, self.value)
             SE.write_single_expenses()
 
-            self.answer = f'Бюджет на день {Calculate().budget()} рублей\nРасходов за сегодня {Calculate().sum_day_expenses()} рублей\nЖелательно потратить не больше чем {Calculate().balance()} рублей'
+            self.answer = f'Бюджет на день {Calculate().budget() + Calculate().single.today_income} рублей\nРасходов за сегодня {Calculate().sum_day_expenses()} рублей\nЖелательно потратить не больше чем {Calculate().balance()} рублей'
 
 
 class Calculate:
@@ -142,6 +142,8 @@ class Calculate:
     def __init__(self):
         self.reader = DB.ReadFromTable()
         self.days = calendar.monthrange(int(str(datetime.date.today())[:4]), int(str(datetime.date.today())[5:7]))[1]
+        self.single = SingleIncome()
+        self.single.check_income()
 
     def sum_day_expenses(self):
         """
@@ -155,13 +157,11 @@ class Calculate:
         """
         (Регулярные доходы + разовые доходы - регулярные расходы) и все это делить на количество дней в месяце
         """
-        single = SingleIncome()
-        single.check_income()
-        return str(round((int(RegularIncome().sum_regular_income) - int(RegularExpenses().sum_regular_expenses)) / int(self.days)) + int(single.today_income))
+        return str(round(int(RegularIncome().sum_regular_income) - int(RegularExpenses().sum_regular_expenses)) / int(self.days))
 
     def balance(self):
 
-        return int(self.budget()) - int(self.sum_day_expenses())
+        return int(self.budget()) - int(self.sum_day_expenses()) + int(self.single.today_income)
 
 
 class RegularIncome:
