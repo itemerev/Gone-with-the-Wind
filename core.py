@@ -109,7 +109,7 @@ class Event:
         Проверяет наличие команд в вденном тексте
         """
         
-        if '/' in self.text[0] and self.text[0] in self.command:
+        if '/' in self.text[0] and self.text[0] in self.commands:
             """
             При наличии команды, выполняет соотвествующую ей функцию
             """
