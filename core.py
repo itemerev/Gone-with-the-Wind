@@ -7,11 +7,12 @@ class Event:
     """
     Класс для обработки событий и соответсвующих им действий
     """
-
+    
     def __init__(self, user_text):
         self.text = user_text.split()
-        self.answer = 'None'
+        self.answer = 'None'  # Ответ на сообщение пользователя, который будет сформирован после обработки сообщения
 
+        # Список команд для внесения записей через телеграмм-бота
         self.commands = {
             '/RI': self.ri,
             '/readRI': self.read_ri,
@@ -28,10 +29,16 @@ class Event:
         }
 
     def ri(self):
+        '''
+        Внесение записи в "Регулярные доходы"
+        '''
         RegularIncome().add_regular_income(self.text[2], self.text[1])
         self.answer = f'Даблен регулярный доход "{self.text[2]}" в количестве {self.text[1]} рублей'
 
     def read_ri(self):
+        '''
+        Чтении всех записей "Регулярных доходов"
+        '''
         regular_income = DB.ReadFromTable().read_regular_income()
         answer_text = 'Пусто'
         if regular_income:
@@ -41,15 +48,24 @@ class Event:
         self.answer = answer_text
 
     def del_ri(self):
+        '''
+        Удаление записи "Регулярных доходов"
+        '''
         category = self.text[1]
         DB.DeleteFromTable().delete_regular_income(category)
         self.answer = f'Регулярный доход "{category}" удален'
 
     def si(self):
+        '''
+        Внесение записи в "Разовые доходы"
+        '''
         SingleIncome().add_single_income(self.text[2], self.text[1])
         self.answer = f'Добавлен разовый доход "{self.text[2]}" в размере {self.text[1]} рублей'
 
     def read_si(self):
+        '''
+        Чтении всех записей "Разовых доходов"
+        '''
         single_income = DB.ReadFromTable().read_single_income()
         answer_text = 'Пусто'
         if single_income:
@@ -59,15 +75,24 @@ class Event:
         self.answer = answer_text
 
     def del_si(self):
+        '''
+        Удаление записи "Разовых доходов"
+        '''
         category = self.text[1]
         DB.DeleteFromTable().delete_single_income(category)
         self.answer = f'"{category}" удален из разовых доходов'
 
     def re(self):
+        '''
+        Внесение записи в "Регулярные расходы"
+        '''
         RegularExpenses().add_regular_expenses(self.text[2], self.text[1])
         self.answer = f'"{self.text[2]}" в количестве {self.text[1]} рублей добавлено в регулярные расходы'
 
     def read_re(self):
+        '''
+        Чтении всех записей "Регулярных расходов"
+        '''
         regular_expenses = DB.ReadFromTable().read_regular_expenses()
         answer_text = 'Пусто'
         if regular_expenses:
@@ -77,11 +102,17 @@ class Event:
         self.answer = answer_text
 
     def del_re(self):
+        '''
+        Удаление записи "Регулярных расходов"
+        '''
         category = self.text[1]
         DB.DeleteFromTable().delete_regular_expenses(category)
         self.answer = f'"{category}" удален из регулярных расходов'
     
     def read_day(self):
+        '''
+        Посмотреть все записи из таблицы Расходов за день
+        '''
         day_expenses = DB.ReadFromTable().read_day_expenses()
         answer_text = 'Пусто'
         if day_expenses:
@@ -91,6 +122,9 @@ class Event:
         self.answer = answer_text
 
     def read_mon(self):
+        '''
+        Посмотреть все записи из таблицы Расходов за месяц
+        '''
         mon_expenses = DB.ReadFromTable().read_month_expenses()
         answer_text = 'Пусто'
         if mon_expenses:
@@ -100,18 +134,21 @@ class Event:
         self.answer = answer_text
 
     def del_day(self):
+        '''
+        Удалить запись из таблицы Расходов за день
+        '''
         expense_id = self.text[1]
         DB.DeleteFromTable().delete_single_expenses(expense_id)
         self.answer = f'Запись под номером "{expense_id}" удалена из таблицы текущих расходов'
 
     def start(self):
         """
-        Проверяет наличие команд в вденном тексте
+        Проверяет наличие команд в сообщении пользователя
         """
         
         if '/' in self.text[0] and self.text[0] in self.commands:
             """
-            При наличии команды, выполняет соотвествующую ей функцию
+            При наличии команды, выполняет соотвествующий ей метод
             """
             
             return self.commands[self.text[0]]()
@@ -155,12 +192,14 @@ class Calculate:
 
     def budget(self):
         """
-        (Регулярные доходы + разовые доходы - регулярные расходы) и все это делить на количество дней в месяце
+        (Регулярные доходы + разовые доходы - регулярные расходы) разделенные на количество дней в месяце
         """
         return str(round((int(RegularIncome().sum_regular_income) - int(RegularExpenses().sum_regular_expenses)) / int(self.days)))
 
     def balance(self):
-
+        """
+        Разница между бюджетом на день и фактическими тратами за день
+        """
         return int(self.budget()) - int(self.sum_day_expenses()) + int(self.single.today_income)
 
 
@@ -196,14 +235,16 @@ class RegularIncome:
 
     def add_regular_income(self, value, category):
         """
-        Добавляет запись о регулрных расходов в базу данных
+        Добавляет запись о регулярных доходах в базу данных
         """
-
         self.check_id()
         DB.WriteToTable().write_regular_income(self.ri_id, value, category)
 
 
 class SingleIncome:
+    """
+    Работа с данными Разовых доходов
+    """
     single_income_id = '1'
     today_income = '0'
     all_today_income = None
@@ -212,16 +253,25 @@ class SingleIncome:
         self.last_line = DB.ReadFromTable().get_last_single_income()
 
     def check_income(self):
+        '''
+        Суммирует разовые доходы за сегодня
+        '''
         self.all_today_income = DB.ReadFromTable().get_today_income()
         if self.all_today_income:
             for line in self.all_today_income:
                 self.today_income = str(int(self.today_income) + int(line[-1]))
     
     def check_id(self):
+        '''
+        Проверяет id последней внесенной записи в разовые доходы
+        '''
         if self.last_line:
             self.single_income_id = str(int(self.last_line[0]) + 1)
 
     def add_single_income(self, category, value):
+        """
+        Добавляет запись о разовых доходах в базу данных
+        """
         self.check_id()
         DB.WriteToTable().write_single_income(self.single_income_id, str(datetime.date.today()), category, value)
 
@@ -235,16 +285,25 @@ class RegularExpenses:
         self.check_sum()
     
     def check_sum(self):
+        '''
+        Суммирует регулярные расходы
+        '''
         if self.last_line:
             all_regular_expenses = DB.ReadFromTable().read_regular_expenses()
             for line in all_regular_expenses:
                 self.sum_regular_expenses = str(int(self.sum_regular_expenses) + int(line[2]))
 
     def check_id(self):
+        '''
+        Проверяет id последней внесенной записи в регулярных расходах
+        '''
         if self.last_line:
             self.re_id = str(int(self.last_line[0]) + 1)
 
     def add_regular_expenses(self, category, value):
+        """
+        Добавляет запись о регулярных расходах в базу данных
+        """
         self.check_id()
         DB.WriteToTable().write_regular_expenses(self.re_id, category, value)
 
@@ -271,7 +330,6 @@ class SingleExpenses:
         """
         Смена даты
         """
-
         calc = Calculate()
 
         DB.CreateLog().write_day_log()
@@ -284,8 +342,7 @@ class SingleExpenses:
     def change_month(self):
         """
         Смена месяца
-        """
-        
+        """        
         DB.CreateLog().write_month_log()
         DB.ClearTable().clear_month_expenses()
         self.day_id = '1'
@@ -294,7 +351,6 @@ class SingleExpenses:
         """
         Проверка на наличие предыдущей записи расходов в течение дня и присвоение id для текущей записи
         """
-
         if self.last_expenses:
             self.expenses_id = str(int(self.last_expenses[0]) + 1)
 
@@ -302,7 +358,6 @@ class SingleExpenses:
         """
         Проверка на наличие предыдущей записи в таблице расходов за месяц и присвоение id для текущей записи
         """
-
         if self.last_day_expenses:
             self.day_id = str(int(self.last_day_expenses[0]) + 1)
 
@@ -310,7 +365,6 @@ class SingleExpenses:
         """
         Проверка соответсвия текущей даты с датой последней записи в таблице расходов за день
         """
-
         if self.last_expenses:
             return self.date == self.last_expenses[1]
         return True
@@ -319,7 +373,6 @@ class SingleExpenses:
         """
         Проверка соответсвия текущего месяца с месяцем последней записи в таблице расходов за месяц
         """
-        
         if self.last_expenses:
             last_month = self.last_expenses[1][:7]
             return self.date[:7] == last_month
@@ -329,7 +382,6 @@ class SingleExpenses:
         """
         Сохранение данных о разовых расходах в БД
         """
-    
         if not self.check_month():
             self.change_day()
             self.change_month()
