@@ -1,4 +1,4 @@
-#!/usrbin/env python3
+#!/usr/bin/env python3
 
 # version 1.0
 
@@ -17,7 +17,7 @@ dp = Dispatcher(bot)
 
 def create_all_tables():
     """
-    Создание всех таблице в базе данных, если их не существует
+    Создание всех таблиц в базе данных, если их еще не существует
     """
 
     DB.CreateTables().create_regular_income()
@@ -65,7 +65,7 @@ async def help(message: types.Message):
 @dp.message_handler()
 async def echo(message: types.Message):
     """
-    Обработка сообщения через ядро (core.py) и ответ на него
+    Обработка сообщения через ядро (core.py) и ответ на сообщение
     """
 
     one_event = core.Event(message.text)
